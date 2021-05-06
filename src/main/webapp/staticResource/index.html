@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>书城首页</title>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <base href="http://localhost:8080/NewBook_war_exploded/staticResource/">
+    <link type="text/css" rel="stylesheet" href="static/css/style.css">
+    <script type="text/javascript">
+        $(function () {
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/client/display",
+                type: "post",
+                dataType: "json",
+                data: {
+                    pageNO: 1,
+                    min: 0,
+                    max: 9999999
+                },
+                success: common
+            });
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/cart/countInCart",
+                type: "post",
+                dataType: "json",
+                data: {},
+                success:
+                    function (data) {
+                        if (data.status===1){
+                            $("#countInCart").text(data.countInCart);
+                            $("#login_box").html(`欢迎<span style="font-size: 25px; color: red">`+data.user.username+`</span>光临尚硅谷书城`);
+                            $("#register_box").html(`<a href="javascript:void(0);" onclick="logout()">登出</a>`);
+                        }else {
+                            $("#countInCart").text("请登录使用购物车");
+                        }
+                    }
+            });
+
+        });
+
+        function logout(){
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/user/logout",
+                type:"post",
+                dataType:"json",
+                data:{},
+                success:
+                function (data) {
+                    alert(data.success);
+                    window.location=data.url;
+                }
+            });
+
+
+        }
+
+
+        function addToCart(e) {
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/cart/addInCart",
+                type: "post",
+                dataType: "json",
+                data: JSON.stringify({
+                    bookId: $(e).parent().parent().find("div:last").find("span:first").text(),
+                    bookname: $(e).parent().parent().find("div:first").find("span:last").text(),
+                    count: 1
+                }),
+                contentType: "application/json",
+                success:
+                    function (data) {
+                        if (data.status === 1) {
+                            $("#justBuy").text(data.success);
+                            $("#countInCart").text(data.countInCart);
+                            $(e).parent().html(`<button onclick="">已加入购物车,点击查看详情</button>`);
+                        }else {
+                            alert(data.failed);
+                            window.location=data.url;
+                        }
+                    }
+            });
+        }
+
+        let common = function (data) {
+            if(data.status!=null){
+                 alert(data.exception.message);
+            }
+            let pageArray = data.page.pageValues;
+            let pages = "";
+            for (var i = 0; i < pageArray.length; i++) {
+                pages +=
+                    `<a style="margin-left: 2px;margin-right: 2px" href="javascript:void(0);" onclick="NOPage(this)">
+                                    ${pageArray[i]}
+                                    </a>`;
+            }
+            let books = data.page.items;
+            let bookList = "";
+            $("input[name='min']").val(data.min);
+            $("input[name='max']").val(data.max);
+            $("#pageNow").text(data.page.pageNO);
+            $("#PageArray").html(pages);
+            $("#totalPageNumber").text(data.page.pageTotal);
+            for (var i = 0; i < books.length; i++) {
+                bookList += `
+            <div class="b_list">
+                    <div class="img_div">
+                            <img class="book_img" alt="" src="static/img/default.jpg"/>
+                    </div>
+                    <div class="book_info">
+                           <div class="book_name">
+                                <span class="sp1">书名:</span>
+                                <span class="sp2">${books [i].name}</span>
+                           </div>
+                           <div class="book_author">
+                                <span class="sp1">作者:</span>
+                                <span class="sp2">${books [i].author}</span>
+                           </div>
+                           <div class="book_price">
+                                <span class="sp1">价格:</span>
+                                <span class="sp2">￥${books [i].price}</span>
+                           </div>
+                           <div class="book_sales">
+                                <span class="sp1">销量:</span>
+                                <span class="sp2">${books [i].sales}</span>
+                           </div>
+                           <div class="book_amount">
+                                <span class="sp1">库存:</span>
+                                <span class="sp2">${books [i].stock}</span>
+                           </div>
+                           <div class="book_add">
+                                <button onclick="addToCart(this)">加入购物车</button>
+                           </div>
+                           <div class="book_id" style="display: none">
+                                <span>${books [i].id}</span>
+                           </div>
+                    </div>
+                </div>`;
+            }
+            $("#displayer").html(bookList);
+        }
+
+        function NOPage(e) {
+            page($(e).text());
+        }
+
+        function lastPage() {
+            if ($("#pageNow").text() === "1") {
+                return;
+            }
+            page(parseInt($("#pageNow").text()) - 1);
+        }
+
+        function nextPage() {
+            if ($("#pageNow").text() === $("#totalPageNumber").text()) {
+                return;
+            }
+            page(parseInt($("#pageNow").text()) + 1);
+        }
+
+        function firstPage() {
+            page(1);
+        }
+
+        function finalPage() {
+            page($("#totalPageNumber").text());
+        }
+
+        function targetPage() {
+            if (parseInt($("#targetPageNO").val()) < 0 || parseInt($("#targetPageNO").val()) > parseInt($("#totalPageNumber").text())) {
+                alert("请输入合理的页码");
+                return;
+            }
+            page($("#targetPageNO").val());
+        }
+
+        function page(pageNO) {
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/client/display",
+                type: "post",
+                dataType: "json",
+                data: {
+                    pageNO: pageNO,
+                    min: $("input[name='min']").val(),
+                    max: $("input[name='max']").val()
+                },
+                success: common
+            });
+        }
+
+        function query(e) {
+            if ($("input[name='min']").val() > $("input[name='max']").val()) {
+                alert("请输入合理的价格区间");
+                return;
+            }
+            page(1);
+        }
+    </script>
+</head>
+<body>
+
+<div id="header">
+    <img class="logo_img" alt="" src="static/img/logo.gif">
+    <span class="wel_word">网上书城</span>
+    <div>
+        <span id="login_box"><a href="pages/user/login.html" id="login">登录</a></span>
+        <span id="register_box"><a href="pages/user/regist.html" id="register">注册</a></span>
+        <a href="pages/cart/cart.html">购物车</a>
+        <a href="pages/manager/manager.html">后台管理</a>
+    </div>
+</div>
+<div id="main">
+    <div id="book">
+        <div class="book_cond">
+            <form>
+                价格：<input id="min" type="text" name="min" value=""> 元 -
+                <input id="max" type="text" name="max" value=""> 元
+                <input type="button" value="查询" onclick="query(this)"/>
+            </form>
+        </div>
+        <div style="text-align: center">
+            <span id="countInCart"></span>
+            <div id="justBuy">
+                <span style="color: red"></span>
+            </div>
+        </div>
+        <div id="displayer"></div>
+    </div>
+</div>
+
+<div id="page_nav">
+    当前第<span id="pageNow"></span>页<span style="margin-left: 5px;margin-right: 5px"></span>
+    <a href="javascript:void(0);" onclick="firstPage()">首页</a>
+    <a href="javascript:void(0);" onclick="lastPage()">上一页</a>
+    <span id="PageArray" style="margin-left: 5px;margin-right: 5px"></span>
+    <a href="javascript:void(0);" onclick="nextPage()">下一页</a>
+    <a href="javascript:void(0);" onclick="finalPage()">末页</a>共<span id="totalPageNumber"
+                                                                     style="margin-left: 5px;margin-right: 5px"></span>
+    页 到第<input type="text" id="targetPageNO" style="width: 25px"/>页
+    <button value="跳转" id="goto" onclick="targetPage()">跳转</button>
+</div>
+
+</div>
+
+<div id="bottom">
+		<span>
+			尚硅谷书城.Copyright &copy;2015
+		</span>
+</div>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <base href="http://localhost:8080/NewBook_war_exploded/staticResource/">
+    <link type="text/css" rel="stylesheet" href="static/css/style.css">
+    <script type="text/javascript">
+        $(function () {
+            dispaly();
+        });
+
+        function dispaly() {
+            $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/cart/displayInCart",
+                    type: "post",
+                    dataType: "json",
+                    data: {},
+                    success: function (data) {
+                        if (data.status === 1) {
+                            let cartItems = data.AllItemsInCart;
+                            let bookList = "";
+                            let totalPice = 0;
+                            for (var i = 0; i < cartItems.length; i++) {
+                                bookList += `<tr>
+                                                <td>${cartItems [i].bookname}</td>
+                                                <td>${cartItems [i].count}</td>
+                                                <td>${cartItems [i].price}</td>
+                                                <td>${cartItems [i].total}</td>
+                                                <td><a href="javascript:void(0);" onclick="changeCount(this)">修改</a></td>
+                                                <td><a href="javascript:void(0);" onclick="removeCart(this)">删除</a></td>
+                                                <td style="display: none">${cartItems[i].bookId}</td>
+                                             </tr>`;
+                                totalPice += cartItems [i].count * cartItems [i].price;
+                            }
+                            $(".um_span").text(data.user.username);
+                            $("#tbody").html(bookList);
+                            $(".b_count").text(cartItems.length);
+                            $(".b_price").text(totalPice);
+                        } else {
+                            alert(data.failed);
+                            window.location = data.url;
+                        }
+                    }
+                }
+            );
+        }
+
+
+        function changeCount(e) {
+            let originCount = $(e).parent().parent().find("td:nth-child(2)").text();
+            $(e).parent().parent().find("td:nth-child(2)").html(`<input class="countChangeText" value="` +
+                originCount + `" type="text"/>`);
+            $(e).parent().parent().find("td:nth-child(5)").html(`<input style="width: 100px;" class="submint" value="提交修改" onclick="submitChange(this)" type="button"/>`);
+        }
+
+        function submitChange(e) {
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/cart/updateCount",
+                type: "post",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    bookId: $(e).parent().parent().find("td:last").text(),
+                    count: $(e).parent().parent().find("td:nth-child(2)").find("input:first").val(),
+                    price: $(e).parent().parent().find("td:nth-child(3)").text()
+                }),
+                success:
+                    function (data) {
+                        if (data.status === 1) {
+                            dispaly();
+                        } else {
+                            alert(data.failed);
+                            window.location = data.url;
+                        }
+                    }
+            });
+
+        }
+
+        function removeCart(e) {
+            if (confirm("将<<" + $(e).parent().parent().find("td:first").text() + ">>移出购物车？")) {
+                $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/cart/deleteCart",
+                    type: "post",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        bookId: $(e).parent().parent().find("td:last").text(),
+                    }),
+                    success:
+                        function (data) {
+                            if (data.status === 1) {
+                                dispaly();
+                            } else {
+                                alert(data.failed);
+                                window.location = data.url;
+                            }
+                        }
+                });
+            }
+        }
+
+        function clearCart() {
+            if (confirm("清空购物车？")) {
+                $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/cart/clear",
+                    type: "post",
+                    dataType: "json",
+                    data: {},
+                    success:
+                        function (data) {
+                            if (data.status === 1) {
+                                $("#tbody").html("");
+                                $(".b_count").text(0);
+                                $(".b_price").text(0);
+                            } else {
+                                alert(data.failed);
+                                window.location = data.url;
+                            }
+                        }
+                });
+            }
+        }
+
+        function createOrder(){
+            if (confirm("付款并生成订单？")) {
+                $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/order/create",
+                    type: "post",
+                    dataType: "json",
+                    data: {},
+                    success:
+                        function (data) {
+                            if (data.status === 1) {
+                                alert(data.success);
+                                dispaly();
+                            } else {
+                                alert(data.failed);
+                            }
+                        }
+                });
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<div id="header">
+    <img class="logo_img" alt="" src="static/img/logo.gif">
+    <span class="wel_word">购物车</span>
+    <div>
+        <span>欢迎<span class="um_span"></span>光临尚硅谷书城</span>
+        <a href="pages/order/order.html">我的订单</a>
+        <a href="index.html">注销</a>&nbsp;&nbsp;
+        <a href="index.html">返回</a>
+    </div>
+</div>
+
+<div id="main">
+
+    <table>
+        <thead>
+        <tr>
+            <td>商品名称</td>
+            <td>数量</td>
+            <td>单价</td>
+            <td>金额</td>
+            <td>修改</td>
+            <td>删除</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+
+    <div class="cart_info">
+        <span class="cart_span">购物车中共有<span class="b_count"></span>件商品</span>
+        <span class="cart_span">总金额<span class="b_price"></span>元</span>
+        <span class="cart_span"><a href="javascript:void(0);" onclick="clearCart()">清空购物车</a></span>
+        <span class="cart_span"><a href="javascript:void(0);" onclick="createOrder()">去结账</a></span>
+    </div>
+
+</div>
+
+<div id="bottom">
+		<span>
+			尚硅谷书城.Copyright &copy;2015
+		</span>
+</div>
+</body>
+</html>

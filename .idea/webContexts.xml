@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebContextManager">
+    <option name="state">
+      <map>
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/index.html" value="file://$PROJECT_DIR$/src/main/webapp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/cart/cart.html" value="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/cart" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/manager/book_manager.html" value="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/manager" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/user/login_success.html" value="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/user" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/user/regist.html" value="file://$PROJECT_DIR$/src/main/webapp/staticResource/pages/user" />
+      </map>
+    </option>
+  </component>
+</project>

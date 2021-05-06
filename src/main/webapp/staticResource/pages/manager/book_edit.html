@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>编辑图书</title>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <base href="http://localhost:8080/NewBook_war_exploded/staticResource/">
+    <link type="text/css" rel="stylesheet" href="static/css/style.css">
+    <style type="text/css">
+        h1 {
+            text-align: center;
+            margin-top: 200px;
+        }
+
+        h1 a {
+            color: red;
+        }
+
+        input {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#submit_button").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/manager/addBook",
+                    type: "post",
+                    data: JSON.stringify({
+                        name: $("[name='book_name']").val(),
+                        price: $("[name='book_price']").val(),
+                        author: $("[name='book_author']").val(),
+                        sales: $("[name='book_sales']").val(),
+                        stock: $("[name='book_stock']").val()
+                    }),
+                    contentType: "application/json",
+                    success:
+                        function (data) {
+                            alert(data.success);
+                            window.location = data.url;
+                        }
+                });
+            });
+        });
+
+
+    </script>
+</head>
+<body>
+<div id="header">
+    <img class="logo_img" alt="" src="static/img/logo.gif">
+    <span class="wel_word">编辑图书</span>
+    <div>
+        <a href="pages/manager/book_manager.html">图书管理</a>
+        <a href="pages/manager/order_manager.html">订单管理</a>
+        <a href="index.html">返回商城</a>
+    </div>
+</div>
+
+<div id="main">
+    <form>
+        <table>
+            <tr>
+                <td>名称</td>
+                <td>价格</td>
+                <td>作者</td>
+                <td>销量</td>
+                <td>库存</td>
+                <td colspan="2">操作</td>
+            </tr>
+            <tr>
+                <td><input name="book_name" type="text" value="时间简史"/></td>
+                <td><input name="book_price" type="text" value="30.00"/></td>
+                <td><input name="book_author" type="text" value="霍金"/></td>
+                <td><input name="book_sales" type="text" value="200"/></td>
+                <td><input name="book_stock" type="text" value="300"/></td>
+                <td><input id="submit_button" type="submit" value="提交"/></td>
+            </tr>
+        </table>
+    </form>
+
+
+</div>
+
+<div id="bottom">
+			<span>
+				尚硅谷书城.Copyright &copy;2015
+			</span>
+</div>
+</body>
+</html>
