@@ -4,7 +4,6 @@ package com.bjpowernode.controller;
 import com.bjpowernode.pojo.Book;
 import com.bjpowernode.pojo.Page;
 import com.bjpowernode.service.BookService;
-import javafx.beans.value.ObservableValueBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
