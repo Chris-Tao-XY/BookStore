@@ -17,10 +17,19 @@
                 },
                 success: common
             });
+
+
         });
 
-        function failed(data){
-            if(data.status===1){
+        function updatebookimformation(e) {
+            let bookId = $(e).parent().parent().find("td:last").text();
+            let url = "http://localhost:8080/NewBook_war_exploded/staticResource/pages/manager/book_edit.html?bookId=" +
+                bookId;
+            window.location.href = url;
+        }
+
+        function failed(data) {
+            if (data.status === 1) {
                 alert(data.NotManager);
                 window.location = data.url;
                 return;
@@ -51,6 +60,7 @@
                                 <td class="book_stock">${books [i].stock}</td>
                                 <td class="update_btn"><a href="javascript:void(0);" onclick="updateBook(this)">修改</a></td>
                                 <td><a href="javascript:void(0);" onclick="deleteBook(this)">删除</a></td>
+                                <td><a href="javascript:void(0);" onclick="updatebookimformation(this)">修改</a></td>
                                 <td style="display: none">${books [i].id}</td>
                             </tr>`;
             }

@@ -4,8 +4,6 @@ package com.bjpowernode.controller;
 import com.bjpowernode.pojo.Mykaptcha;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import sun.awt.SunHints;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;

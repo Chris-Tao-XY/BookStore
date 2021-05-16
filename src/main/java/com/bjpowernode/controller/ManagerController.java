@@ -37,7 +37,7 @@ public class ManagerController {
         return map;
     }
 
-    @RequestMapping("deleteBook")
+    @RequestMapping("/deleteBook")
     public Object deleteBook(@RequestBody Book book) {
         Map<String, Object> map = new HashMap<>();
         bookService.deleteBook(book.getId());
@@ -45,11 +45,19 @@ public class ManagerController {
         return map;
     }
 
-    @RequestMapping("updateBook")
+    @RequestMapping("/updateBook")
     public Object updateBook(@RequestBody Book book) {
         bookService.updateBook(book);
         Map<String, Object> map = new HashMap<>();
         map.put("success", book.getName() + "更改成功");
+        return map;
+    }
+
+    @RequestMapping("/queryBookById")
+    public Object queryBook(@RequestParam(value = "bookId")Integer bookId){
+        Book book = bookService.queryBookById(bookId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("book",book);
         return map;
     }
 

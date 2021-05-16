@@ -5,6 +5,7 @@ import com.bjpowernode.eception.AlreadyExistUserException;
 import com.bjpowernode.eception.NotRegisterException;
 import com.bjpowernode.pojo.User;
 import com.bjpowernode.service.UserService;
+import com.bjpowernode.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loginUser(User user) {
         if(existUser(user.getUsername())){
-            return userDao.queryUserByUsernameAndPassword(user.getUsername(),user.getPassword());
+            return userDao.queryUserByUsernameAndPassword(user.getUsername(), user.getPassword());
         }else {
             throw new NotRegisterException();
         }

@@ -21,7 +21,29 @@
         }
     </style>
     <script type="text/javascript">
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
         $(function () {
+            let bookId = getUrlParam("bookId");
+            $.ajax({
+                url: "http://localhost:8080/NewBook_war_exploded/manager/queryBookById",
+                type: "post",
+                data: {
+                    "bookId": bookId
+                },
+                success:
+                    function (data) {
+                        $("[name='book_name']").val(data.book.name);
+                        $("[name='book_price']").val(data.book.price);
+                        $("[name='book_author']").val(data.book.author);
+                        $("[name='book_sales']").val(data.book.sales);
+                        $("[name='book_stock']").val(data.book.stock);
+                    }
+            });
             $("#submit_button").click(function (e) {
                 e.preventDefault();
                 $.ajax({

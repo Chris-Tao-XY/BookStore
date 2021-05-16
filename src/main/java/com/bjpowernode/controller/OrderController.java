@@ -2,6 +2,7 @@ package com.bjpowernode.controller;
 
 import com.bjpowernode.eception.NotEnoughException;
 import com.bjpowernode.pojo.Order;
+import com.bjpowernode.pojo.Book;
 import com.bjpowernode.pojo.User;
 import com.bjpowernode.service.OrderService;
 
@@ -22,7 +23,7 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
-    @RequestMapping("create")
+    @RequestMapping("/create")
     public Object createOrder(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         Map<String,Object> map=new HashMap<>();
