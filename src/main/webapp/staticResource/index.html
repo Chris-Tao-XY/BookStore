@@ -35,6 +35,19 @@
                         }
                     }
             });
+            $("#getWeather").click(function (){
+                $.ajax({
+                    url: "http://localhost:8080/NewBook_war_exploded/weather/weather",
+                    type: "post",
+                    dataType: "json",
+                    data: {},
+                    success:
+                        function (data) {
+                        alert(data);
+                            alert(data.result.showapi_res_body.list[0].prov);
+                        }
+                });
+            });
 
         });
 
@@ -199,7 +212,7 @@
 
 <div id="header">
     <img class="logo_img" alt="" src="static/img/logo.gif">
-    <span class="wel_word">网上书城</span>
+    <span class="wel_word">网上书城</span><button id="getWeather" value="显示天气">芜湖市天气</button>
     <div>
         <span id="login_box"><a href="pages/user/login.html" id="login">登录</a></span>
         <span id="register_box"><a href="pages/user/regist.html" id="register">注册</a></span>
